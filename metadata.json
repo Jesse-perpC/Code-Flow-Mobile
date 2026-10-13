@@ -1,0 +1,6 @@
+{
+  "name": "OpenCode",
+  "description": "Local code server, SSH access, interactive terminal, Git integration, and AI code completion for remote development.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

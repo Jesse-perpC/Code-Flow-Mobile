@@ -12,12 +12,19 @@ android {
   namespace = "com.example"
   compileSdk { version = release(36) { minorApiLevel = 1 } }
 
+  val computedVersionCode = project.findProperty("versionCode")?.toString()?.toIntOrNull()
+      ?: System.getenv("VERSION_CODE")?.toIntOrNull()
+      ?: 1
+  val computedVersionName = project.findProperty("versionName")?.toString()
+      ?: System.getenv("VERSION_NAME")
+      ?: "1.0.$computedVersionCode"
+
   defaultConfig {
     applicationId = "com.aistudio.codeserver.devbox"
     minSdk = 24
     targetSdk = 36
-    versionCode = 1
-    versionName = "1.0"
+    versionCode = computedVersionCode
+    versionName = computedVersionName
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
@@ -26,11 +33,19 @@ android {
   // and updating Android apps in AI Studio.
   signingConfigs {
     create("release") {
-      val keystorePath = System.getenv("KEYSTORE_PATH") ?: "${rootDir}/my-upload-key.jks"
-      storeFile = file(keystorePath)
-      storePassword = System.getenv("STORE_PASSWORD")
-      keyAlias = "upload"
-      keyPassword = System.getenv("KEY_PASSWORD")
+      val customPath = System.getenv("KEYSTORE_PATH")
+      val uploadKey = file("${rootDir}/my-upload-key.jks")
+      val keystoreFile = if (customPath != null && file(customPath).exists()) {
+        file(customPath)
+      } else if (uploadKey.exists()) {
+        uploadKey
+      } else {
+        file("${rootDir}/debug.keystore")
+      }
+      storeFile = keystoreFile
+      storePassword = System.getenv("STORE_PASSWORD") ?: "android"
+      keyAlias = if (keystoreFile.name == "debug.keystore") "androiddebugkey" else (System.getenv("KEY_ALIAS") ?: "upload")
+      keyPassword = System.getenv("KEY_PASSWORD") ?: "android"
     }
     create("debugConfig") {
       storeFile = file("${rootDir}/debug.keystore")

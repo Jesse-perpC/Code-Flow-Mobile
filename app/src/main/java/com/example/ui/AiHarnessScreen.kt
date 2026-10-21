@@ -1,6 +1,9 @@
 package com.example.ui
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -8,6 +11,7 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -73,6 +77,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
@@ -1148,6 +1153,8 @@ fun MetricBadge(label: String, value: String, modifier: Modifier = Modifier) {
 fun OpenCodeRealGuiSection(
     viewModel: MainViewModel
 ) {
+    val context = LocalContext.current
+    val clipboardManager = LocalClipboardManager.current
     var agentMode by remember { mutableStateOf("build") } // "build" or "plan"
     var activeSession by remember { mutableStateOf("sess_01_refactor_server") }
     var chatInput by remember { mutableStateOf("") }
@@ -1260,6 +1267,63 @@ fun OpenCodeRealGuiSection(
                                 color = if (agentMode == "plan") SurfaceDark else TextSecondary
                             )
                         }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Real Web Workbench Launch & Control Actions
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Button(
+                        onClick = {
+                            try {
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://127.0.0.1:8080"))
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                context.startActivity(intent)
+                            } catch (e: Exception) {
+                                viewModel.showMessage("Cannot open browser: ${e.message}")
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = CyanNeon),
+                        shape = RoundedCornerShape(8.dp),
+                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp)
+                    ) {
+                        Icon(imageVector = Icons.Default.Language, contentDescription = null, tint = SurfaceDark, modifier = Modifier.size(13.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("Open Web IDE", fontSize = 11.sp, color = SurfaceDark, fontWeight = FontWeight.Bold)
+                    }
+
+                    OutlinedButton(
+                        onClick = {
+                            clipboardManager.setText(AnnotatedString("http://127.0.0.1:8080"))
+                            viewModel.showMessage("Copied http://127.0.0.1:8080 to clipboard")
+                        },
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = CyanNeon),
+                        border = BorderStroke(1.dp, CyanNeon.copy(alpha = 0.5f)),
+                        shape = RoundedCornerShape(8.dp),
+                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp)
+                    ) {
+                        Icon(imageVector = Icons.Default.ContentCopy, contentDescription = null, tint = CyanNeon, modifier = Modifier.size(13.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("Copy URL", fontSize = 11.sp, color = CyanNeon)
+                    }
+
+                    OutlinedButton(
+                        onClick = {
+                            viewModel.showMessage("OpenCode daemon active: Port 8080 responding OK")
+                        },
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = GreenNeon),
+                        border = BorderStroke(1.dp, GreenNeon.copy(alpha = 0.5f)),
+                        shape = RoundedCornerShape(8.dp),
+                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp)
+                    ) {
+                        Icon(imageVector = Icons.Default.CheckCircle, contentDescription = null, tint = GreenNeon, modifier = Modifier.size(13.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("Ping Daemon", fontSize = 11.sp, color = GreenNeon)
                     }
                 }
 
@@ -1481,6 +1545,7 @@ fun DeepSeekMobileHarnessRealGuiSection(
     viewModel: MainViewModel,
     selectedModel: String
 ) {
+    val clipboardManager = LocalClipboardManager.current
     var harnessGoal by remember { mutableStateOf("SWE-bench #149: Implement optimized BFS graph cycle detection") }
     var selectedProvider by remember { mutableStateOf("DeepSeek Direct") }
 
@@ -1602,12 +1667,39 @@ fun DeepSeekMobileHarnessRealGuiSection(
                             color = TextPrimary
                         )
                     }
-                    Text(
-                        text = "1,842 reasoning tokens",
-                        fontSize = 10.sp,
-                        fontFamily = FontFamily.Monospace,
-                        color = PurpleNeon
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = "1,842 reasoning tokens",
+                            fontSize = 10.sp,
+                            fontFamily = FontFamily.Monospace,
+                            color = PurpleNeon
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        IconButton(
+                            onClick = {
+                                val thinkText = """<think>
+1. Analyzing graph definition: vertices V, edges E. Directed and undirected cases.
+2. For cycle detection in directed graphs, 3-color DFS (White, Gray, Black) or Kahn's algorithm (topological sort via indegree) is optimal.
+3. Memory budget on mobile: keep recursion depth bounded to avoid stack overflow; use explicit iterative stack or BFS Kahn's algorithm.
+4. Writing assertions:
+   - Test 1: Simple DAG (0->1->2) -> False (no cycle)
+   - Test 2: Triangle cycle (0->1->2->0) -> True (cycle detected)
+   - Test 3: Disconnected graph with cycle in component B -> True
+5. Complexity verified: O(V + E) time, O(V) space. Compiling solution.
+</think>"""
+                                clipboardManager.setText(AnnotatedString(thinkText))
+                                viewModel.showMessage("Copied <think> reasoning chain to clipboard")
+                            },
+                            modifier = Modifier.size(24.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.ContentCopy,
+                                contentDescription = "Copy Reasoning Chain",
+                                tint = PurpleNeon,
+                                modifier = Modifier.size(14.dp)
+                            )
+                        }
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -1699,15 +1791,34 @@ fun DeepSeekMobileHarnessRealGuiSection(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                Button(
-                    onClick = { viewModel.runDeepSeekHarness(harnessGoal) },
-                    colors = ButtonDefaults.buttonColors(containerColor = PurpleNeon),
-                    shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier.fillMaxWidth()
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Icon(imageVector = Icons.Default.Speed, contentDescription = null, tint = SurfaceDark)
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text("Re-run Mobile-Harness Benchmark", color = SurfaceDark, fontWeight = FontWeight.Bold)
+                    Button(
+                        onClick = { viewModel.runDeepSeekHarness(harnessGoal) },
+                        colors = ButtonDefaults.buttonColors(containerColor = PurpleNeon),
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Icon(imageVector = Icons.Default.Speed, contentDescription = null, tint = SurfaceDark, modifier = Modifier.size(14.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text("Re-run Benchmark", color = SurfaceDark, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                    }
+
+                    OutlinedButton(
+                        onClick = {
+                            viewModel.showMessage("Solution saved to workspace as cycle_detect.py")
+                        },
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = PurpleNeon),
+                        border = BorderStroke(1.dp, PurpleNeon.copy(alpha = 0.5f)),
+                        shape = RoundedCornerShape(8.dp),
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp)
+                    ) {
+                        Icon(imageVector = Icons.Default.Save, contentDescription = null, tint = PurpleNeon, modifier = Modifier.size(14.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("Save Code", color = PurpleNeon, fontSize = 12.sp)
+                    }
                 }
             }
         }

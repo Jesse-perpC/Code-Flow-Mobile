@@ -63,4 +63,32 @@ class ExampleUnitTest {
         assertTrue(SampleData.initialFiles.any { it.name == "analytics.py" })
         assertEquals("default-project", SampleData.initialWorkspace.id)
     }
+
+    @Test
+    fun testDeepSeekHarnessEngineExecution() = kotlinx.coroutines.runBlocking {
+        val engine = com.example.ai.DeepSeekHarnessEngine()
+        val result = engine.executeHarnessTest(
+            taskTitle = "Algorithm: Binary Tree Level Order Traversal (BFS)",
+            modelName = "DeepSeek-R1 (Reasoning Chain)"
+        )
+        assertNotNull(result)
+        assertEquals("DeepSeek-R1 (Reasoning Chain)", result.modelName)
+        assertTrue(result.reasoningChain.contains("<think>"))
+        assertTrue(result.testsPassed > 0)
+        assertEquals(3, result.totalTests)
+    }
+
+    @Test
+    fun testOpenCodeAgentTaskExecution() = kotlinx.coroutines.runBlocking {
+        val engine = com.example.ai.OpenCodeAgentEngine()
+        val state = engine.runAgentTask(
+            task = "Inspect and improve server.js",
+            onProgress = { }
+        )
+        assertNotNull(state)
+        assertEquals("server.js", state.targetFilePath)
+        assertTrue(state.toolCalls.isNotEmpty())
+        assertNotNull(state.proposedDiff)
+        assertTrue(state.proposedDiff!!.contains("+++ b/server.js"))
+    }
 }

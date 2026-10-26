@@ -45,7 +45,9 @@ enum class AppScreen {
     EDITOR,
     TERMINAL,
     GIT,
-    SYNC_SETTINGS
+    SYNC_SETTINGS,
+    WEB_PREVIEW,
+    TOOLS_EXPLORER
 }
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
@@ -167,8 +169,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    // Navigation state
-    private val _currentScreen = MutableStateFlow(AppScreen.DASHBOARD)
+    // Navigation state - defaults to the authentic AI Workstation
+    private val _currentScreen = MutableStateFlow(AppScreen.AI_HARNESS)
     val currentScreen: StateFlow<AppScreen> = _currentScreen.asStateFlow()
 
     // Database flows

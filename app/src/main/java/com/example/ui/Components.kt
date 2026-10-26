@@ -23,12 +23,16 @@ import androidx.compose.material.icons.filled.BatteryFull
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.DeveloperMode
 import androidx.compose.material.icons.filled.Dns
+import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Psychology
 import androidx.compose.material.icons.filled.QrCode2
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.icons.filled.Terminal
 import com.example.model.ExecutionEngine
@@ -83,6 +87,10 @@ fun AppHeader(
     onThemePickerClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    val isOpenCode = currentEngine == ExecutionEngine.OPENCODE
+    val engineColor = if (isOpenCode) CyanNeon else PurpleNeon
+    val oppositeEngineColor = if (isOpenCode) PurpleNeon else CyanNeon
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -90,124 +98,148 @@ fun AppHeader(
         shape = RoundedCornerShape(0.dp),
         colors = CardDefaults.cardColors(containerColor = SurfaceDark)
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+                .padding(horizontal = 14.dp, vertical = 8.dp)
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    modifier = Modifier
-                        .size(34.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(if (currentEngine == ExecutionEngine.OPENCODE) CyanNeon.copy(alpha = 0.15f) else PurpleNeon.copy(alpha = 0.15f))
-                        .border(1.dp, if (currentEngine == ExecutionEngine.OPENCODE) CyanNeon.copy(alpha = 0.4f) else PurpleNeon.copy(alpha = 0.4f), RoundedCornerShape(8.dp)),
-                    contentAlignment = Alignment.Center
+            // Main Branding & Controls Row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                // Authentic Logo & Title
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f, fill = false)
                 ) {
-                    Text(
-                        text = if (currentEngine == ExecutionEngine.OPENCODE) ">_" else "D",
-                        fontFamily = FontFamily.Monospace,
-                        fontWeight = FontWeight.Bold,
-                        color = if (currentEngine == ExecutionEngine.OPENCODE) CyanNeon else PurpleNeon,
-                        fontSize = 14.sp
-                    )
-                }
-                Spacer(modifier = Modifier.width(10.dp))
-                Column {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(34.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(engineColor.copy(alpha = 0.15f))
+                            .border(1.dp, engineColor.copy(alpha = 0.45f), RoundedCornerShape(8.dp)),
+                        contentAlignment = Alignment.Center
+                    ) {
                         Text(
-                            text = "OpenCode",
-                            fontWeight = FontWeight.Bold,
-                            color = TextPrimary,
+                            text = if (isOpenCode) ">_" else "D",
+                            fontFamily = FontFamily.Monospace,
+                            fontWeight = FontWeight.Black,
+                            color = engineColor,
                             fontSize = 15.sp
                         )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Box(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(4.dp))
-                                .background(if (currentEngine == ExecutionEngine.OPENCODE) CyanNeon.copy(alpha = 0.18f) else PurpleNeon.copy(alpha = 0.18f))
-                                .clickable(onClick = onToggleEngine)
-                                .padding(horizontal = 6.dp, vertical = 2.dp)
-                                .testTag("header_engine_badge")
-                        ) {
+                    }
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Column {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                text = if (currentEngine == ExecutionEngine.OPENCODE) "⚡ OpenCode" else "🧠 DeepSeek",
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = if (currentEngine == ExecutionEngine.OPENCODE) CyanNeon else PurpleNeon
+                                text = if (isOpenCode) "opencode" else "Mobile-Harness",
+                                fontWeight = FontWeight.Black,
+                                color = TextPrimary,
+                                fontSize = 15.sp,
+                                fontFamily = if (isOpenCode) FontFamily.Monospace else FontFamily.Default
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(4.dp))
+                                    .background(engineColor.copy(alpha = 0.18f))
+                                    .padding(horizontal = 5.dp, vertical = 1.dp)
+                            ) {
+                                Text(
+                                    text = if (isOpenCode) "v1.4.2" else "TechJarves",
+                                    fontSize = 9.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    fontFamily = FontFamily.Monospace,
+                                    color = engineColor
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(4.dp))
+                            StatusBadge(
+                                text = if (serverRunning) ":8080" else "OFF",
+                                isActive = serverRunning,
+                                activeColor = CyanNeon
                             )
                         }
-                        Spacer(modifier = Modifier.width(4.dp))
-                        StatusBadge(
-                            text = if (serverRunning) ":8080" else "OFF",
-                            isActive = serverRunning,
-                            activeColor = CyanNeon
+                        Text(
+                            text = if (isOpenCode) "~/workspace/opencode-project • git:(main*)" else "Ubuntu 20.04 LTS (PRoot ARM64) • 57 Tools",
+                            color = if (lowBatteryMode) GreenNeon else TextMuted,
+                            fontSize = 10.sp,
+                            fontFamily = FontFamily.Monospace
                         )
                     }
-                    Text(
-                        text = if (lowBatteryMode) "Low Battery Mode: Active" else "E2E Secured • ARM64 Local Daemon",
-                        color = if (lowBatteryMode) GreenNeon else TextMuted,
-                        fontSize = 11.sp
-                    )
                 }
-            }
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                // Battery indicator
-                Row(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(6.dp))
-                        .background(SurfaceDarkVariant)
-                        .padding(horizontal = 8.dp, vertical = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = if (isCharging) Icons.Default.BatteryChargingFull else Icons.Default.BatteryFull,
-                        contentDescription = "Battery Status",
-                        tint = if (batteryLevel < 20) Color(0xFFFF5555) else GreenNeon,
-                        modifier = Modifier.size(16.dp)
-                    )
+                // Header Action Buttons
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    // One-Tap Switcher to the other engine
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(6.dp))
+                            .background(oppositeEngineColor.copy(alpha = 0.15f))
+                            .border(1.dp, oppositeEngineColor.copy(alpha = 0.4f), RoundedCornerShape(6.dp))
+                            .clickable(onClick = onToggleEngine)
+                            .padding(horizontal = 8.dp, vertical = 5.dp)
+                            .testTag("header_engine_switch_button")
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.SwapHoriz,
+                                contentDescription = "Switch Engine",
+                                tint = oppositeEngineColor,
+                                modifier = Modifier.size(13.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = if (isOpenCode) "Switch to Harness" else "Switch to OpenCode",
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = oppositeEngineColor
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.width(6.dp))
+
+                    // Battery indicator
+                    Row(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(6.dp))
+                            .background(SurfaceDarkVariant)
+                            .padding(horizontal = 6.dp, vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = if (isCharging) Icons.Default.BatteryChargingFull else Icons.Default.BatteryFull,
+                            contentDescription = "Battery Status",
+                            tint = if (batteryLevel < 20) Color(0xFFFF5555) else GreenNeon,
+                            modifier = Modifier.size(14.dp)
+                        )
+                        Spacer(modifier = Modifier.width(3.dp))
+                        Text(
+                            text = "$batteryLevel%",
+                            color = TextPrimary,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = "$batteryLevel%",
-                        color = TextPrimary,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
 
-                Spacer(modifier = Modifier.width(6.dp))
-
-                IconButton(
-                    onClick = onThemePickerClick,
-                    modifier = Modifier
-                        .size(34.dp)
-                        .testTag("app_theme_picker_button")
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Palette,
-                        contentDescription = "Switch App Theme",
-                        tint = PurpleNeon,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(2.dp))
-
-                IconButton(
-                    onClick = onRemoteConnectClick,
-                    modifier = Modifier
-                        .size(34.dp)
-                        .testTag("remote_connect_dialog_button")
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.QrCode2,
-                        contentDescription = "Remote Connect",
-                        tint = CyanNeon,
-                        modifier = Modifier.size(20.dp)
-                    )
+                    IconButton(
+                        onClick = onRemoteConnectClick,
+                        modifier = Modifier
+                            .size(30.dp)
+                            .testTag("remote_connect_dialog_button")
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.QrCode2,
+                            contentDescription = "Remote Connect",
+                            tint = CyanNeon,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
                 }
             }
         }
@@ -242,23 +274,38 @@ fun StatusBadge(
 @Composable
 fun AppBottomNav(
     currentScreen: AppScreen,
+    currentEngine: ExecutionEngine = ExecutionEngine.OPENCODE,
     onNavigate: (AppScreen) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isOpenCode = currentEngine == ExecutionEngine.OPENCODE
+    val accentColor = if (isOpenCode) CyanNeon else PurpleNeon
+
+    val items = if (isOpenCode) {
+        listOf(
+            Triple(AppScreen.AI_HARNESS, "Agent (TUI)", Icons.Default.Terminal),
+            Triple(AppScreen.WEB_PREVIEW, "Web GUI", Icons.Default.Language),
+            Triple(AppScreen.EDITOR, "Editor", Icons.Default.Code),
+            Triple(AppScreen.TERMINAL, "Terminal", Icons.Default.Terminal),
+            Triple(AppScreen.GIT, "Diffs", Icons.Default.Share),
+            Triple(AppScreen.DASHBOARD, "Daemon", Icons.Default.Dns)
+        )
+    } else {
+        listOf(
+            Triple(AppScreen.AI_HARNESS, "Agent", Icons.Default.Psychology),
+            Triple(AppScreen.TERMINAL, "Terminal", Icons.Default.Terminal),
+            Triple(AppScreen.EDITOR, "Files", Icons.Default.Folder),
+            Triple(AppScreen.WEB_PREVIEW, "Preview", Icons.Default.Language),
+            Triple(AppScreen.TOOLS_EXPLORER, "57 Tools", Icons.Default.DeveloperMode),
+            Triple(AppScreen.DASHBOARD, "System", Icons.Default.Dns)
+        )
+    }
+
     NavigationBar(
         modifier = modifier.testTag("main_bottom_nav"),
         containerColor = SurfaceDark,
         tonalElevation = 8.dp
     ) {
-        val items = listOf(
-            Triple(AppScreen.DASHBOARD, "Server", Icons.Default.Dns),
-            Triple(AppScreen.AI_HARNESS, "AI Agent", Icons.Default.Psychology),
-            Triple(AppScreen.EDITOR, "Editor", Icons.Default.Code),
-            Triple(AppScreen.TERMINAL, "Terminal", Icons.Default.Terminal),
-            Triple(AppScreen.GIT, "Git", Icons.Default.Share),
-            Triple(AppScreen.SYNC_SETTINGS, "Sync", Icons.Default.Sync)
-        )
-
         items.forEach { (screen, label, icon) ->
             val isSelected = currentScreen == screen
             NavigationBarItem(
@@ -268,15 +315,15 @@ fun AppBottomNav(
                     Icon(
                         imageVector = icon,
                         contentDescription = label,
-                        tint = if (isSelected) CyanNeon else TextMuted
+                        tint = if (isSelected) accentColor else TextMuted
                     )
                 },
                 label = {
                     Text(
                         text = label,
-                        fontSize = 11.sp,
+                        fontSize = 10.sp,
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                        color = if (isSelected) CyanNeon else TextMuted
+                        color = if (isSelected) accentColor else TextMuted
                     )
                 },
                 colors = NavigationBarItemDefaults.colors(

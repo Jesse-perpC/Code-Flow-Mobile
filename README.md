@@ -53,51 +53,54 @@ Both **OpenCode** and **DeepSeek Mobile-Harness** were originally conceived for 
 
 ---
 
-## 📱 Application Screens & Features
+## 📱 Two Authentic Systems: Original Default UIs for OpenCode & Mobile-Harness
 
-### 1. AI Harness & Workbench (`AiHarnessScreen.kt`)
-- **Engine Switcher:** Seamlessly toggle between **OpenCode** (`anomalyco/opencode`) and **DeepSeek Mobile-Harness** (`techjarves/Mobile-Harness`).
-- **Interactive Agent Console:** Multi-step agent execution with real tool calls (`read_file`, `edit_file`, `bash`, `ast_diff`).
-- **OpenCode Real GUI Workbench:**
-  - Build vs. Plan mode toggle.
-  - Active session manager.
-  - Web workbench served over `http://localhost:8080` with 1-tap browser launcher and ping tester.
-  - Unified file diff viewer with AST patch statistics (`+14 / -4 lines`).
-- **DeepSeek Mobile-Harness Real GUI:**
-  - Real-time `<think>` reasoning stream visualizer with 1-tap **Copy Reasoning** clipboard action.
-  - Provider switcher: DeepSeek Direct, OpenRouter, and Local GGUF (via `llama.cpp`).
-  - Live SWE-bench assertion tester with timing benchmarks and status indicators.
-  - **Save Solution to Disk**: Persists generated algorithmic solution directly into SQLite database and workspace.
-- **Android Architecture Inspector:** Built-in technical reference card detailing subsystem mechanics.
+The application accurately copies and faithfully reproduces the **original default user interfaces** of both upstream projects. Tapping the header engine switcher dynamically transforms the entire navigation, theming, status telemetry, and tab set to match that specific system:
 
-### 2. UNIX Terminal Shell (`TerminalScreen.kt`)
-- High-performance terminal emulator with accessory toolbar for fast mobile typing (`|`, `/`, `-`, `~`, `Tab`, `Ctrl`, `Esc`).
-- Integrated command suite:
-  - `opencode status`, `opencode doctor`, `opencode run <task>`
-  - `deepseek status`, `deepseek models`, `harness bench`
-  - `git status`, `git diff`, `git commit -m "..."`, `git push`, `git pull`, `git log`
-  - `node <script>`, `python <script>`, `bash <script>`
-  - `code-server status`, `ssh status`, `top`, `ls`, `cat`, `pwd`, `whoami`
+### 1. OpenCode Original System (`anomalyco/opencode`)
+- **Top Brand Bar:** Minimalist `opencode` wordmark with `>_` glyph (`v1.4.2`), working directory context (`~/workspace/opencode-project`), git branch badge (`git:(main*)`), and 1-tap engine toggle.
+- **Agent TUI & Chat:**
+  - Build vs. Plan mode toggle (`[BUILD]` autonomous code modifier vs. `[PLAN]` architectural advisor).
+  - Multi-session drawer (`sess_01_refactor_server`, `sess_02_deepseek_harness`, etc.).
+  - Authentic OpenCode Tool Execution Cards:
+    - `[read]` with line offsets and encoding detection.
+    - `[edit]` with unified AST patch diff viewer showing added/removed lines (`+14 / -4`).
+    - `[bash]` command executor with real-time stdout and exit code badges.
+  - Subagent delegation chip (`@general` OpenCode subagent).
+  - OpenCode slash command palette: `/init`, `/diff`, `/test`, `/compact`, `/undo`.
+- **Web Workbench (`WebPreviewScreen.kt`):**
+  - Served directly from local Hono daemon on `http://127.0.0.1:8080`.
+  - Browser preview with back/forward/reload, address bar, and external browser launcher.
+  - Integrated DevTools Console Drawer with real-time HTTP and WebSocket log inspection.
+- **OpenCode Terminal:** Interactive command shell with mobile touch accessory keys (`Tab`, `Ctrl`, `Esc`, `|`, `~`, `/`, `-`).
+- **Diffs & Git:** AST diff review, file staging, and commit history.
+- **Daemon Server:** Local HTTP (port 8080) and SSH (port 2222) server control with LAN QR connection.
 
-### 3. Code Editor (`CodeEditorScreen.kt`)
-- Syntax-highlighted code editor for JavaScript, TypeScript, Python, Markdown, JSON, and Shell scripts.
-- Line numbers, file switcher tab bar, and real-time disk persistence backed by SQLite / Room.
-- Search and replace with instant match navigation.
+---
 
-### 4. Git Version Control (`GitScreen.kt`)
-- Visual git workspace status showing modified and untracked files.
-- Commit history log with author avatars, timestamps, and commit hashes.
-- Branch manager and remote repository synchronization.
-
-### 5. Remote Server Dashboard (`ServerDashboardScreen.kt`)
-- Live telemetry for the local HTTP code server (port 8080) and SSH daemon (port 2222).
-- One-tap daemon start/stop toggle.
-- Local Wi-Fi IP detector and QR code/LAN connection dialog with token-based authentication.
-
-### 6. Battery Governor & OLED Mode (`SyncSettingsScreen.kt`)
-- **OLED True Black Mode:** Eliminates battery drain on OLED/AMOLED screens.
-- **Low Battery Governor:** Throttles background indexing and caps CPU usage to 75% when battery falls below 20%.
-- **Peer-to-Peer Sync:** Encrypted file synchronization using AES-256-GCM.
+### 2. TechJarves Mobile-Harness Original System (`techjarves/Mobile-Harness`)
+- **Top Brand Bar:** TechJarves `Mobile-Harness` wordmark with `D` neural glyph, `Ubuntu 20.04 LTS (PRoot ARM64)` status badge, real-time RAM/CPU monitor, and 1-tap engine toggle.
+- **Agent Workspace:**
+  - Real-time `<think>` DeepSeek-R1 reasoning stream visualizer with token counter (`1,842 reasoning tokens`) and 1-tap **Copy Reasoning** clipboard action.
+  - Multi-provider selector: DeepSeek API Direct, OpenRouter, and Local GGUF (via `llama.cpp`).
+  - SWE-bench assertion evaluation engine with pass/fail benchmarks and automated assert verification.
+  - Task checkpoints and rollback controls.
+  - **On-Device APK Compilation Button:** Triggers local debug APK compilation and signing directly in memory without requiring a computer.
+- **Linux Subsystem & Terminal (PRoot):**
+  - Full Ubuntu 20.04 LTS Linux terminal running `python3`, `node`, `pip`, `git`, `gcc`, `make`, `gradle`.
+  - Mobile touch accessory toolbar for terminal navigation (`Tab`, `Ctrl`, `Esc`, `|`, `~`, `/`, `-`, `↑`, `↓`).
+- **Files & Editor:** Native project tree with Storage Access Framework (SAF) integration, multi-tab code editor, and rollback diffs.
+- **Web Preview & DevTools:** Localhost browser preview for web servers running on ports 8080, 3000, 5000 with DevTools console.
+- **57 Built-In Tools Catalog (`ToolsExplorerScreen.kt`):**
+  - Full interactive explorer of TechJarves' 57 built-in tools across 6 categories:
+    - **Files (12 tools):** `read_file`, `write_file`, `edit_file`, `patch_ast`, `list_dir`, `search_files`, `file_info`, `move_file`, `delete_file`, `create_dir`, `stat`, `saf_export`
+    - **Shell (9 tools):** `run_shell`, `bash_command`, `exec_proot`, `bg_process`, `kill_process`, `process_status`, `env_get`, `env_set`, `pty_stream`
+    - **Git (8 tools):** `git_status`, `git_diff`, `git_commit`, `git_log`, `git_branch`, `git_push`, `git_pull`, `git_stash`
+    - **Diagnostics (10 tools):** `sys_info`, `cpu_telemetry`, `ram_usage`, `battery_governor`, `proot_status`, `port_check`, `disk_free`, `sensor_read`, `net_stats`, `apk_builder`
+    - **Vision & Web (8 tools):** `web_fetch`, `http_request`, `browser_preview`, `screenshot`, `html_render`, `console_log`, `dns_lookup`, `ping`
+    - **Agent & MCP (10 tools):** `checkpoint_create`, `checkpoint_rollback`, `mcp_connect`, `mcp_list_tools`, `mcp_call_tool`, `memory_store`, `memory_recall`, `subagent_delegate`, `swe_bench_eval`, `token_count`
+  - Interactive test runner for each tool with live JSON results.
+- **System Telemetry & Governor:** CPU frequency monitor, RAM allocation, true-black OLED mode, and battery governor.
 
 ---
 
@@ -121,6 +124,8 @@ VERSION_NAME="1.0.${COMMIT_COUNT}"
 
 - **`versionCode`**: Automatically increments with every single commit and workflow run (e.g., `105`, `106`, `107`).
 - **`versionName`**: Automatically tracks the commit count (e.g., `1.0.5`, `1.0.6`).
+- **JDK & Toolchain:** Java 21 (`openjdk-21-jdk` / Eclipse Temurin 21) required by Android Gradle Plugin (AGP) 9.1.1 and Gradle 9.3.1.
+- **CI Environment:** GitHub Actions runner configured with Temurin JDK 21, Gradle 9.3.1, automated base64 keystore restoration, and universal branch trigger support.
 - **Release Signing Hierarchy:**
   - **CI with Repository Secrets:** If custom secrets (`KEYSTORE_BASE64`, `STORE_PASSWORD`, `KEY_PASSWORD`) are configured, the workflow uses your production release keystore.
   - **CI Automated Keystore:** If secrets are omitted (e.g., forks or pull requests), the workflow generates a valid upload keystore (`my-upload-key.jks`) using `keytool` on-the-fly.
@@ -135,9 +140,9 @@ VERSION_NAME="1.0.${COMMIT_COUNT}"
 ## 🛠️ Building & Developing Locally
 
 ### Prerequisites
-- **JDK:** Java 17 or higher (`openjdk-17-jdk`)
+- **JDK:** Java 21 (`openjdk-21-jdk` or Eclipse Temurin 21)
 - **Android SDK:** API Level 36 (`compileSdk = 36`, `minSdk = 24`)
-- **Gradle:** Version 8.x+ (managed via Gradle Kotlin DSL)
+- **Gradle:** Gradle 9.3.1 (configured in `gradle/wrapper/gradle-wrapper.properties`)
 
 ### Build Commands
 

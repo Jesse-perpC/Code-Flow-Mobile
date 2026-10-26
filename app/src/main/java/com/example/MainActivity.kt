@@ -80,9 +80,9 @@ fun OpenCodeApp(viewModel: MainViewModel) {
         }
     }
 
-    // Handle system back navigation if not on dashboard
-    BackHandler(enabled = currentScreen != AppScreen.DASHBOARD) {
-        viewModel.navigateTo(AppScreen.DASHBOARD)
+    // Handle system back navigation if not on main AI harness
+    BackHandler(enabled = currentScreen != AppScreen.AI_HARNESS) {
+        viewModel.navigateTo(AppScreen.AI_HARNESS)
     }
 
     Scaffold(
@@ -112,6 +112,7 @@ fun OpenCodeApp(viewModel: MainViewModel) {
         bottomBar = {
             AppBottomNav(
                 currentScreen = currentScreen,
+                currentEngine = currentEngine,
                 onNavigate = { viewModel.navigateTo(it) }
             )
         },
@@ -146,6 +147,12 @@ fun OpenCodeApp(viewModel: MainViewModel) {
                         viewModel = viewModel
                     )
                     AppScreen.SYNC_SETTINGS -> SyncSettingsScreen(
+                        viewModel = viewModel
+                    )
+                    AppScreen.WEB_PREVIEW -> com.example.ui.WebPreviewScreen(
+                        viewModel = viewModel
+                    )
+                    AppScreen.TOOLS_EXPLORER -> com.example.ui.ToolsExplorerScreen(
                         viewModel = viewModel
                     )
                 }
